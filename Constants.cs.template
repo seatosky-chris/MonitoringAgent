@@ -1,0 +1,500 @@
+using System;
+using System.Collections.Generic;
+
+namespace MonitoringAgent
+{
+	public static class Constants
+	{
+        /// <summary>
+        /// The time zone to use when getting the current date.
+        /// Must be a string the `TimeZoneInfo.FindSystemTimeZoneById` function will accept.
+        /// </summary>
+        public static string TimeZone = "Pacific Standard Time";
+        
+		/// <summary>
+        /// Modify this Dictionary to add new checks and to change the amount of days inactive to alert on
+        /// The key name must match the field name in IT Glue (what is returned in the API)
+        /// </summary>
+        public static Dictionary<string, Dictionary<string, string>> lastRunChecks =
+            new Dictionary<string, Dictionary<string, string>>
+            {
+                // User Audit
+                {
+                    "current-version",
+                    new Dictionary<string, string>
+                    {
+                        {"latest-version", "2.12.2"},
+                        {"version-updated-on", "28/02/2022"}, // dd/mm/yy when the version # was last incremented, check will only be done if the audit has ran since that date
+                        {"error", "User Audit Version"},
+                        {"error-details", "The User Audit version is out of date."}
+                    }
+                },
+                {
+                    "contact-audit",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "31"},
+                        {"error", "Contact Audit [User Audit]"},
+                        {"error-details", "The Contact Audit portion of the User Audit has not ran in over 1 month."}
+                    }
+                },
+                {
+                    "billing-update-ua",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "31"},
+                        {"error", "Billing Update [User Audit]"},
+                        {"error-details", "The Billing Update portion of the User Audit has not ran in over 1 month."}
+                    }
+                },
+                {
+                    "o365-license-report",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "31"},
+                        {"error", "O365 License Report [User Audit]"},
+                        {"error-details", "The O365 License Report portion of the User Audit has not ran in over 1 month."}
+                    }
+                },
+
+                // Device Audit
+                {
+                    "device-cleanup",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "3"},
+                        {"error", "Device Cleanup [Device Audit]"},
+                        {"error-details", "The Device Cleanup portion of the Device Audit has not ran recently."}
+                    }
+                },
+                {
+                    "device-usage",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "3"},
+                        {"error", "Device Usage [Device Audit]"},
+                        {"error-details", "The Device Usage portion of the Device Audit has not ran recently."}
+                    }
+                },
+                {
+                    "device-locations",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "3"},
+                        {"error", "Device Locations [Device Audit]"},
+                        {"error-details", "The Device Locations portion of the Device Audit has not ran recently."}
+                    }
+                },
+                {
+                    "monthly-stats-rollup",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "31"},
+                        {"error", "Monthly Stats Rollup [Device Audit]"},
+                        {"error-details", "The Monthly Stats Rollup portion of the Device Audit has not ran in over 1 month."}
+                    }
+                },
+                {
+                    "billing-update-da",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "31"},
+                        {"error", "Billing Update [Device Audit]"},
+                        {"error-details", "The Billing Update portion of the Device Audit has not ran in over 1 month."}
+                    }
+                },
+
+                // Auto Documentation
+                {
+                    "contact-cleanup",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "Contact Cleanup"},
+                        {"error-details", "The Contact Cleanup script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "active-directory",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "Active Directory [AutoDoc]"},
+                        {"error-details", "The Active Directory auto-documentation script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "ad-groups",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "AD Groups [AutoDoc]"},
+                        {"error-details", "The AD Groups auto-documentation script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "o365-groups",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "O365 Groups [AutoDoc]"},
+                        {"error-details", "The O365 Groups auto-documentation script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "hyper-v",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "Hyper-V [AutoDoc]"},
+                        {"error-details", "The Hyper-V auto-documentation script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "file-shares",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "File Shares [AutoDoc]"},
+                        {"error-details", "The File Shares auto-documentation script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "licensing-overview",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "2"},
+                        {"error", "Licensing Overview [AutoDoc]"},
+                        {"error-details", "The Licensing Overview auto-documentation script has not ran recently."}
+                    }
+                },
+                {
+                    "meraki-licensing",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "7"},
+                        {"error", "Meraki Licensing [AutoDoc]"},
+                        {"error-details", "The Meraki Licensing auto-documentation script has not ran in over 1 week."}
+                    }
+                },
+                {
+                    "bluebeam-licensing",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "2"},
+                        {"error", "Bluebeam Licensing [AutoDoc]"},
+                        {"error-details", "The Bluebeam Licensing auto-documentation script has not ran recently."}
+                    }
+                }
+            };
+
+        /// <summary>
+        /// Modify this Dictionary to add new checks for Custom Scripts and to change the amount of days inactive to alert on
+        /// The first key must match the org ID in IT Glue, the second key must match the label in the "Custom Scripts" textbox of the Last Run asset
+        /// </summary>
+        public static Dictionary<int, Dictionary<string, Dictionary<string, string>>> customLastRunChecks =
+            new Dictionary<int, Dictionary<string, Dictionary<string, string>>>
+            {
+                // Example Company 1
+                {
+                    1234567,
+                    new Dictionary<string, Dictionary<string, string>>
+                    {
+                        {
+                            "Salary DL Updater",
+                            new Dictionary<string, string>
+                            {
+                                {"inactive-days", "7"},
+                                {"error", "Salary DL Updater [Custom Script]"},
+                                {"error-details", "The Salary DL Updater custom script has not ran in over 1 week."}
+                            }
+                        }
+                    }
+                },
+
+                // Example Company 2
+                {
+                    7654321,
+                    new Dictionary<string, Dictionary<string, string>>
+                    {
+                        {
+                            "Wifi Updater",
+                            new Dictionary<string, string>
+                            {
+                                {"inactive-days", "1"},
+                                {"error", "Wifi Updater [Custom Script]"},
+                                {"error-details", "The Wifi Updater custom script has not ran recently."}
+                            }
+                        }
+                    }
+                }, 
+            };
+
+        /// <summary>
+        /// A variable that holds the CSS styling used on webpages. This should be put between <style> tags in the html.
+        /// </summary>
+        public static string tableStyling = @"
+            a.title h2 {
+                font-size: 2.5rem;
+                color: #363636;
+                font-weight: 600;
+                line-height: 1.125;
+                word-break: break-word;
+                margin: 0;
+                padding: 0;
+                display: inline-block;
+                text-decoration: underline;
+            }
+            a.title h2:not(:last-child) {
+                margin-bottom: 1.5rem;
+            }
+
+            a.title {
+                text-decoration-color: black;
+            }
+
+            .styled-table {
+                border-collapse: collapse;
+                margin: 25px 0;
+                font-size: 0.9em;
+                font-family: sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .styled-table thead tr {
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }
+
+            .styled-table th,
+            .styled-table td {
+                padding: 12px 15px;
+            }
+
+            .styled-table tbody tr {
+                border-bottom: thin solid #dddddd;
+            }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+            
+            .styled-table tbody tr.highlight-row {
+                font-weight: bold;
+                color: #009879;
+            }
+        ";
+        
+        /// <summary>
+        /// A variable that holds the HTML email template for sending warning emails.
+        /// You should use it with string formatting like so: String.Format(emailTemplate, "Intro", "Title", BuildResponseHTMLInner(warnings), "Footer");
+        /// There are a few locations in the body where you can enter data through string formatting:
+        /// 0 - The intro line, e.g. 'The monitoring agent found 2 issues.'
+        /// 1 - The title (in bold), e.g. 'Issues Found'
+        /// 2 - The body, this should be written in html and can be any length. The BuildResponseHTMLInner() function can be used here to create a list of all the warnings.
+        /// 3 - Optional footer text at the end, e.g. 'Please fix the above issues'.
+        /// </summary>
+        public static string emailTemplate = @"
+            <!doctype html>
+            <html>
+            <head>
+                <meta name=""viewport"" content=""width=device-width"">
+                <meta http-equiv=""Content-Type"" content=""text/html; charset=UTF-8"">
+                <title>Simple Transactional Email</title>
+                <style>
+                /* Custom Styles */
+                a.title h2 {{
+                    font-size: 2rem;
+                    color: #363636;
+                    font-weight: 600;
+                    line-height: 1.125;
+                    word-break: break-word;
+                    margin: 0;
+                    padding: 0;
+                    display: inline-block;
+                    text-decoration: underline;
+                }}
+                a.title h2:not(:last-child) {{
+                    margin-bottom: 1.5rem;
+                }}
+
+                a.title {{
+                    text-decoration-color: black;
+                }}
+
+                .styled-table {{
+                    margin: 10px 0;
+                    font-size: 0.9em;
+                    font-family: sans-serif;
+                    border-bottom: 2px solid #009879;                
+                }}
+
+                .styled-table thead tr {{
+                    background-color: #009879;
+                    color: #ffffff;
+                    text-align: left;
+                }}
+
+                .styled-table th,
+                .styled-table td {{
+                    padding: 2px 6px;
+                    border-top: thin solid #dddddd;
+                }}
+
+                .styled-table tbody tr.highlight-row {{
+                    font-weight: bold;
+                    color: #009879;
+                }}
+
+                /* -------------------------------------
+                    INLINED WITH htmlemail.io/inline
+                ------------------------------------- */
+                .mobile_table_fallback {{
+                    display: none;
+                }}
+                /* -------------------------------------
+                    RESPONSIVE AND MOBILE FRIENDLY STYLES
+                ------------------------------------- */
+                @media only screen and (max-width: 620px) {{
+                table[class=body] h1 {{
+                    font-size: 28px !important;
+                    margin-bottom: 10px !important;
+                }}
+                table[class=body] p,
+                        table[class=body] ul,
+                        table[class=body] ol,
+                        table[class=body] td,
+                        table[class=body] span,
+                        table[class=body] a {{
+                    font-size: 16px !important;
+                }}
+                table[class=body] .wrapper,
+                        table[class=body] .article {{
+                    padding: 10px !important;
+                }}
+                table[class=body] .content {{
+                    padding: 0 !important;
+                }}
+                table[class=body] .container {{
+                    padding: 0 !important;
+                    width: 100% !important;
+                }}
+                table[class=body] .main {{
+                    border-left-width: 0 !important;
+                    border-radius: 0 !important;
+                    border-right-width: 0 !important;
+                }}
+                table[class=body] .btn table {{
+                    width: 100% !important;
+                }}
+                table[class=body] .btn a {{
+                    width: 100% !important;
+                }}
+                table[class=body] .img-responsive {{
+                    height: auto !important;
+                    max-width: 100% !important;
+                    width: auto !important;
+                }}
+                table.desktop_only_table {{
+                    display: none;
+                }}
+                .mobile_table_fallback {{
+                    display: block !important;
+                }}
+                }}
+
+                /* -------------------------------------
+                    PRESERVE THESE STYLES IN THE HEAD
+                ------------------------------------- */
+                @media all {{
+                .ExternalClass {{
+                    width: 100%;
+                }}
+                .ExternalClass,
+                        .ExternalClass p,
+                        .ExternalClass span,
+                        .ExternalClass font,
+                        .ExternalClass td,
+                        .ExternalClass div {{
+                    line-height: 100%;
+                }}
+                .apple-link a {{
+                    color: inherit !important;
+                    font-family: inherit !important;
+                    font-size: inherit !important;
+                    font-weight: inherit !important;
+                    line-height: inherit !important;
+                    text-decoration: none !important;
+                }}
+                #MessageViewBody a {{
+                    color: inherit;
+                    text-decoration: none;
+                    font-size: inherit;
+                    font-family: inherit;
+                    font-weight: inherit;
+                    line-height: inherit;
+                }}
+                }}
+                </style>
+            </head>
+            <body class="""" style=""background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;"">
+                <span class=""preheader"" style=""color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;"">This is preheader text. Some clients will show this text as a preview.</span>
+                <table border=""0"" cellpadding=""0"" cellspacing=""0"" class=""body"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;"">
+                <tr>
+                    <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top;"">&nbsp;</td>
+                    <td class=""container"" style=""font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; Margin: 0 auto; max-width: 580px; padding: 10px; width: 580px;"">
+                    <div class=""content"" style=""box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;"">
+
+                        <!-- START CENTERED WHITE CONTAINER -->
+                        <table class=""main"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 3px;"">
+
+                        <!-- START MAIN CONTENT AREA -->
+                        <tr>
+                            <td class=""wrapper"" style=""font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;"">
+                            <table border=""0"" cellpadding=""0"" cellspacing=""0"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"">
+                                <tr>
+                                <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top;"">
+                                    <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;"">{0}</p>
+                                    <br />
+                                    <p style=""font-family: sans-serif; font-size: 18px; font-weight: normal; margin: 0; Margin-bottom: 15px;""><strong>{1}</strong></p>
+                                    {2}
+                                    <br />
+                                    <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;"">{3}</p>
+                                </td>
+                                </tr>
+                            </table>
+                            </td>
+                        </tr>
+
+                        <!-- END MAIN CONTENT AREA -->
+                        </table>
+
+                        <!-- START FOOTER -->
+                        <div class=""footer"" style=""clear: both; Margin-top: 10px; text-align: center; width: 100%;"">
+                        <table border=""0"" cellpadding=""0"" cellspacing=""0"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"">
+                            <tr>
+                            <td class=""content-block"" style=""font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;"">
+                                <span class=""apple-link"" style=""color: #999999; font-size: 12px; text-align: center;"">Sea to Sky Network Solutions, 2554 Vine Street, Vancouver BC V6K 3L1</span>
+                            </td>
+                            </tr>
+                        </table>
+                        </div>
+                        <!-- END FOOTER -->
+
+                    <!-- END CENTERED WHITE CONTAINER -->
+                    </div>
+                    </td>
+                    <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top;"">&nbsp;</td>
+                </tr>
+                </table>
+            </body>
+            </html>
+        ";
+	}
+}

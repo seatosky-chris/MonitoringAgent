@@ -1,0 +1,18 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+
+    "ITG_API_URL": "https://api.itglue.com",
+    "ITG_API_KEY": "",
+    "SCRIPTS_LAST_RUN_ASSET_TYPE_ID": "",
+    "ITG_BASE_URL": "https://company.itglue.com",
+
+    "SENDGRID_API_KEY": "",
+    
+    "EMAIL_FROM_EMAIL": "monitoring_agent@email_domain.com",
+    "EMAIL_FROM_NAME": "Monitoring Agent",
+    "EMAILS_TO": "email1@contoso.com, email2@contoso.com"
+  }
+}
