@@ -95,6 +95,15 @@ namespace MonitoringAgent
                     }
                 },
                 {
+                    "device-users",
+                    new Dictionary<string, string>
+                    {
+                        {"inactive-days", "8"},
+                        {"error", "Device Users Update [Device Audit]"},
+                        {"error-details", "The Device Users update portion of the Device Audit has not ran in over 1 week."}
+                    }
+                },
+                {
                     "billing-update-da",
                     new Dictionary<string, string>
                     {
