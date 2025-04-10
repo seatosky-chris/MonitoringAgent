@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Azure.Functions.Worker.Configuration;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace MonitoringAgent
 {
@@ -10,7 +12,14 @@ namespace MonitoringAgent
         public static void Main()
         {
             var host = new HostBuilder()
-                .ConfigureFunctionsWorkerDefaults()
+                .ConfigureFunctionsWebApplication()
+                .ConfigureServices(services =>
+                {
+                    services.Configure<KestrelServerOptions>(options =>
+                    {
+                        options.AllowSynchronousIO = true;
+                    });
+                })
                 .Build();
 
             host.Run();
