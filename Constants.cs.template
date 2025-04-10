@@ -52,8 +52,8 @@ namespace MonitoringAgent
                     new Dictionary<string, string>
                     {
                         {"inactive-days", "31"},
-                        {"error", "O365 License Report [User Audit]"},
-                        {"error-details", "The O365 License Report portion of the User Audit has not ran in over 1 month."}
+                        {"error", "O365 License Report"},
+                        {"error-details", "The O365 License Report has not ran in over 1 month. This can run as part of the User Audit or Email AutoDoc."}
                     }
                 },
 
